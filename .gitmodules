@@ -1,0 +1,6 @@
+[submodule "mscomponents"]
+	path = mscomponents
+	url = https://github.com/autotel/mscomponents.git
+[submodule "lazyStack"]
+	path = lazyStack
+	url = https://github.com/autotel/lazyStack.git

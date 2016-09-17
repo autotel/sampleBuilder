@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>audio buffer editor</title>
+    <link rel="stylesheet" href="mscomponents.css">
+    <style>
+    .layer-container{
+      border-color:#DDD;
+      border-radius: 10px;
+    }
+    </style>
+  </head>
+  <body>
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="mscomponents/libs/mscomponents/syncman.js"></script>
+  <script src="mscomponents/libs/mscomponents/jquery.mouse.js"></script>
+  <script src="mscomponents/libs/mscomponents/jquery.slider.js"></script>
+  <script>
+  var audioCtx = new AudioContext();
+  if(!audioCtx){
+    var audioCtx = new (window.AudioContext || window.webkitAudioContext);
+  }
+  var sampleSize=2048;
+  var bitDepth=16;
+  var layers=1;
+
+  var layer=(function(){
+    this.sliders=[];
+    this.buffer = audioCtx.createBuffer(1, sampleSize, audioCtx.sampleRate);//441000
+    var nowBuffering = buffer.getChannelData(0);
+    var parent=this;
+    this.$jq=$('<div class="layer-container"></div>');
+    $("body").append(this.$jq);
+    for(var a=0;a<sampleSize;a++){
+      var nslider=new Slider(parent.$jq,{
+        css:{
+          "background-color":"#DDD",
+          display:"inline-block",
+          height:bitDepth
+        }
+      });
+
+      nslider.onChange(function(e){
+        parent.refreshBuffer(e.n);
+      });
+      nslider.data.n=this.sliders.push(nslider)-1;
+    }
+    this.setTo=function(formula){
+      for(var a=0;a<sampleSize;a++){
+        sliders[a].setData(formula(a));
+      }
+    }
+    this.setToSine=function(delta){
+      this.setTo(function(a){
+        return (Math.sin(a*delta*Math.PI)*0.5)+0.5;
+      });
+      this.refreshBuffer();
+    }
+    this.fireBuffer=function(){
+      this.source = audioCtx.createBufferSource();
+      this.source.loop=true;
+      this.source.buffer = parent.buffer;
+      source.connect(audioCtx.destination);
+      source.start();
+      return source;
+    }
+    this.refreshBuffer=function(n){
+      if(n){
+        nowBuffering[n]=sliders[n].data.value*2-1;
+      }else{
+        for(var n=0;n<sampleSize;n++){
+          nowBuffering[n]=sliders[n].data.value*2-1;
+        }
+      }
+    }
+    return this;
+  }());
+
+  </script>
+</html>
