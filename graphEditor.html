@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>getting a zoomable wave buffer editor</title>
+  </head>
+  <body>
+
+  </body>
+  <script src="pixi.js/bin/pixi.js"></script>
+  <script src="on/on.js"></script>
+  <script>
+//  "use strict";
+  var activeGraph=(function(props){
+    var props=props||{bufferLength:512};
+    this.width=500;
+    this.height=100;
+    this.buffer=[];
+    for(var a in props){
+      this[a]=props[a];
+    }
+    for (var a=0; a<props.bufferLength; a++){
+      this.buffer[a]=0.1;
+    }
+    this.middleHeight=this.height/2;
+    this.middleWidth=this.width/2;
+
+    var renderer = PIXI.autoDetectRenderer(this.width, this.height, { antialias: true,backgroundColor : 0x1099bb });
+    document.body.appendChild(renderer.view);
+    // create the root of the scene graph
+    var stage = new PIXI.Container();
+    stage.interactive = true;
+    var graphics = new PIXI.Graphics();
+    this.refreshDisplay=function(){
+      for(var a in this.buffer){
+        //calculate where to draw this sample point
+        var xpos=this.width*a/this.buffer.length;
+        var ypos=this.height*(this.buffer[a]+1)/2;
+        // set a fill and line style
+        graphics.beginFill(0x000000);
+        graphics.lineStyle(2, 0x000000, 1);
+        // draw a shape
+        graphics.moveTo(xpos,middleHeight);
+        graphics.lineTo(xpos, ypos);
+        graphics.endFill();
+        stage.addChild(graphics);
+        renderer.render(stage);
+      }
+    };
+    this.setBuffer=function(to){
+      for(var a in this.buffer){
+        this.buffer[a]=to({portion:a/buffer.length,index:a});
+      }
+      this.refreshDisplay();
+    }
+    this.setBufferToRandom=function(){
+      this.setBuffer(function(){return Math.random()*2-1;});
+    }
+    this.setBufferToSine=function(times){
+      this.setBuffer(function(a){return Math.sin(a.portion*times*Math.PI*2);});
+    }
+    refreshDisplay();
+    // run the render loop
+    // animate();
+    //
+    // function animate() {
+    //   requestAnimationFrame( animate );
+    // }
+    return this;
+  })();
+
+
+  </script>
+</html>

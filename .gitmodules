@@ -4,3 +4,9 @@
 [submodule "lazyStack"]
 	path = lazyStack
 	url = https://github.com/autotel/lazyStack.git
+[submodule "pixi.js"]
+	path = pixi.js
+	url = https://github.com/pixijs/pixi.js.git
+[submodule "on"]
+	path = on
+	url = https://github.com/autotel/on.git
